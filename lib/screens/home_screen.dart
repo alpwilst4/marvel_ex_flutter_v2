@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:marvel_ex_flutter_v2/models/character.dart';
+import 'package:marvel_ex_flutter_v2/models/comics.dart';
 import 'package:provider/provider.dart';
+
+import 'detail_page.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen(this.list);
@@ -27,15 +32,18 @@ class _HomeScreenState extends State<HomeScreen> {
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        list = await Character().getCharacters(60);
+        List list2 = await Character().getCharacters(count+30);
+        
         setState(() {
-         
+          count = count+30;
+         list = list+list2;
           CharacterListBuild(scrollController: _scrollController, list: list,count: count,);
         });
       }
     });
 
     return Scaffold(
+      appBar: AppBar(),
       body: Consumer<Character>(
         builder: (context, charactersDatas, child) {
           return CharacterListBuild(
@@ -61,55 +69,63 @@ class CharacterListBuild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      addAutomaticKeepAlives: true,
+    return ListView.builder(
+      addRepaintBoundaries: false,
+      cacheExtent: 30,
       controller: _scrollController,
-      children: 
-        buildCharacterCard(list)
-      ,
+      itemCount: count,
+      itemBuilder: (context, index) {
+        print(index);
+        return buildCharacterCard(context,
+          list,
+          index,
+        );
+      },
     );
   }
 }
 
-List<Card> buildCharacterCard(List<Character> characters) {
-  List<Card> list = [];
-  for (var character in characters) {
-    var card = Card(
-      child: ListTile(
-    leading: SizedBox(
-        height: 40,
-        width: 40,
-        child: CachedNetworkImage(
-          imageUrl: character.imageUrl,
-          imageBuilder: (context, imageProvider) => Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: imageProvider,
-                fit: BoxFit.cover,
+Widget buildCharacterCard(BuildContext context,List<Character> characters, int index) {
+  return GestureDetector(
+    onTap: () async {
+        Comics comic = Comics();
+        List<Comics> newStyle =
+            await comic.getComicDatas(jsonEncode(characters[index].comics));
+
+        //print(newStyle[0].name);
+
+        return Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DetailPage(
+                      name: characters[index].name,
+                      imageUrl: characters[index].imageUrl,
+                      description: characters[index].description,
+                      comics: newStyle,
+                    )));
+      },
+      child: Card(
+        child: ListTile(
+      leading: SizedBox(
+          height: 40,
+          width: 40,
+          child: Hero(
+                      tag: "image",
+                      child: CachedNetworkImage(
+              imageUrl: characters[index].imageUrl,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
-          ),
-          placeholder: (context, url) => CircularProgressIndicator(),
-          errorWidget: (context, url, error) => Icon(Icons.error),
-        )),
-    title: Text(character.name),
-  ));
-  list.add(card);
-  }
-  return list;
-  
+          )),
+      title: Text(characters[index].name),
+    )),
+  );
 }
-
-
-// ListView.builder(
-//       cacheExtent: 30,
-//       controller: _scrollController,
-//       itemCount: count,
-//       itemBuilder: (context, index) {
-//         print(index);
-//         return buildCharacterCard(
-//           list,
-//           index,
-//         );
-//       },
-//     );

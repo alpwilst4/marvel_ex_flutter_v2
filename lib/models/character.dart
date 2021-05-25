@@ -1,11 +1,11 @@
-import 'dart:collection';
+
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:marvel_ex_flutter_v2/data/data.api/character_api.dart';
 
 //const size = "/portrait_xlarge.jpg";
-const size = "/portrait_small.jpg";
+const size = "/portrait_incredible.jpg";
 
 class Character extends ChangeNotifier {
   //static List<Character> _characters = [];
