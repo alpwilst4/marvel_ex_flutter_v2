@@ -19,35 +19,41 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   _HomeScreenState(this.list);
   List<Character> list;
-  
 
   int count = 30;
-  
+
   @override
   Widget build(BuildContext context) {
-    
-
     ScrollController _scrollController = ScrollController();
 
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        List list2 = await Character().getCharacters(count+30);
-        
+        List list2 = await Character().getCharacters(count + 30);
+
         setState(() {
-          count = count+30;
-         list = list+list2;
-          CharacterListBuild(scrollController: _scrollController, list: list,count: count,);
+          count = count + 30;
+          list = list + list2;
+          CharacterListBuild(
+            scrollController: _scrollController,
+            list: list,
+            count: count,
+          );
         });
       }
     });
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Center(child: Text("WilstComics")),
+      ),
       body: Consumer<Character>(
         builder: (context, charactersDatas, child) {
           return CharacterListBuild(
-              scrollController: _scrollController, list: list,count: count,);
+            scrollController: _scrollController,
+            list: list,
+            count: count,
+          );
         },
       ),
     );
@@ -76,7 +82,8 @@ class CharacterListBuild extends StatelessWidget {
       itemCount: count,
       itemBuilder: (context, index) {
         print(index);
-        return buildCharacterCard(context,
+        return buildCharacterCard(
+          context,
           list,
           index,
         );
@@ -85,9 +92,11 @@ class CharacterListBuild extends StatelessWidget {
   }
 }
 
-Widget buildCharacterCard(BuildContext context,List<Character> characters, int index) {
-  return GestureDetector(
-    onTap: () async {
+Widget buildCharacterCard(
+    BuildContext context, List<Character> characters, int index) {
+  try {
+    return GestureDetector(
+      onTap: () async {
         Comics comic = Comics();
         List<Comics> newStyle =
             await comic.getComicDatas(jsonEncode(characters[index].comics));
@@ -105,27 +114,70 @@ Widget buildCharacterCard(BuildContext context,List<Character> characters, int i
                     )));
       },
       child: Card(
-        child: ListTile(
-      leading: SizedBox(
-          height: 40,
-          width: 40,
-          child: Hero(
-                      tag: "image",
-                      child: CachedNetworkImage(
-              imageUrl: characters[index].imageUrl,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
+          child: ListTile(
+        leading: SizedBox(
+            height: 40,
+            width: 40,
+            child: Hero(
+              tag: "image",
+              child: CachedNetworkImage(
+                imageUrl: characters[index].imageUrl,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ),
-          )),
-      title: Text(characters[index].name),
-    )),
-  );
+            )),
+        title: Text(characters[index].name),
+      )),
+    );
+  } catch (e) {
+    return GestureDetector(
+      onTap: () async {
+        Comics comic = Comics();
+        List<Comics> newStyle =
+            await comic.getComicDatas(jsonEncode(characters[index].comics));
+
+        return Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DetailPage(
+                      name: characters[index].name,
+                      imageUrl: characters[index].imageUrl,
+                      description: characters[index].description,
+                      comics: newStyle,
+                    )));
+      },
+      child: Card(
+          child: ListTile(
+        leading: SizedBox(
+            height: 40,
+            width: 40,
+            child: Hero(
+              tag: "image",
+              child: CachedNetworkImage(
+                imageUrl:
+                    "https://cdn.pixabay.com/photo/2016/12/09/09/52/girl-1894125_1280.jpg",
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
+            )),
+        title: Text(characters[index].name),
+      )),
+    );
+  }
 }

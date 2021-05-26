@@ -18,6 +18,14 @@ class DetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Container(
+          padding: EdgeInsets.only(left: 50),
+            child: Text(
+          "WilstComics",
+          textAlign: TextAlign.center,
+        )),
+      ),
       body: SafeArea(
         child: Container(
           child: Column(
@@ -26,7 +34,7 @@ class DetailPage extends StatelessWidget {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height / 2,
-                  child: Hero(tag: "image", child: Image.network(imageUrl)),
+                  child: Hero(tag: "image", child: Image.network(imageUrl?? "https://cdn.pixabay.com/photo/2016/12/09/09/52/girl-1894125_1280.jpg")),
                 ),
               ),
               SizedBox(
@@ -34,7 +42,8 @@ class DetailPage extends StatelessWidget {
               ),
               Container(
                 padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(border: Border.all(width: 3,color: Colors.white70)),
+                decoration: BoxDecoration(
+                    border: Border.all(width: 3, color: Colors.white70)),
                 child: AnimatedTextKit(animatedTexts: [
                   TypewriterAnimatedText(name,
                       textStyle: TextStyle(
