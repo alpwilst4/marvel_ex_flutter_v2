@@ -19,12 +19,14 @@ class DetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Container(
-          padding: EdgeInsets.only(left: 50),
-            child: Text(
-          "WilstComics",
-          textAlign: TextAlign.center,
-        )),
+        title: Center(
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical:  MediaQuery.of(context).size.width/2),
+              child: Text(
+            "WilstComics",
+            textAlign: TextAlign.center,
+          )),
+        ),
       ),
       body: SafeArea(
         child: Container(
@@ -34,7 +36,7 @@ class DetailPage extends StatelessWidget {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height / 2,
-                  child: Hero(tag: "image", child: Image.network(imageUrl?? "https://cdn.pixabay.com/photo/2016/12/09/09/52/girl-1894125_1280.jpg")),
+                  child: Image.network(imageUrl?? "https://cdn.pixabay.com/photo/2016/12/09/09/52/girl-1894125_1280.jpg"),
                 ),
               ),
               SizedBox(
@@ -122,6 +124,7 @@ class DetailPage extends StatelessWidget {
     list[i] = temp;
   }
 }
+
 
 // Container(
 //                 padding: EdgeInsets.all(5),

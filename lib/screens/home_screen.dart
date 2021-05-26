@@ -118,21 +118,18 @@ Widget buildCharacterCard(
         leading: SizedBox(
             height: 40,
             width: 40,
-            child: Hero(
-              tag: "image",
-              child: CachedNetworkImage(
-                imageUrl: characters[index].imageUrl,
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                    ),
+            child: CachedNetworkImage(
+              imageUrl: characters[index].imageUrl,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             )),
         title: Text(characters[index].name),
       )),
